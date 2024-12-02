@@ -1,0 +1,333 @@
+Протокол Лабораторної роботи 11
+Опис виконаних завдань:
+Завдання 1: Було створено скрипт, який виводить вікно  у випадку коли користувач протягом заданого інтервалу часу не вносить дані.
+Цей скрипт було використано в формі, яка була створена в Лабораторній роботі 9.
+Якщо користувач не внесе даних до форми – використати запуск JavaScript за розкладом. 
+Зміни в коді:
+index.html
+
+<link rel="stylesheet" href="./CSS/style.css">
++    <script>
++        let timeout;
++        function startTimer() {
++            timeout = setTimeout(function () {
++                alert("Будь ласка, введіть дані у форму!");
++            }, 30000);  
++        }
++        function resetTimer() {
++            clearTimeout(timeout);
++        }
++    </script>
+</head>
+
+</div>
++     <form oninput="resetTimer()"> 
+            <div class="form-section">
+
+До кожного поля введення input був добавлений аргумент onfocus="startTimer()" для запуску функції скрипту.
+Завдання 2: Було створено скрипт, який був поміщений в окремий файл, який перевіряє введені користувачем дані за умовами скрипту.
+При запуску функції, а функція запускається при відправці даних кнопкою, функція перевіряє введену користувачем інформацію 
+за умовами в змінних, і якщо ввід не збігається з умовами, виводяться повідомлення про помилки користувача.
+Скрипт таким чином буде продовжувати виводити повідомлення про помилки, допоки вони не закінчяться. 
+Нові файли: 
+form-validation.js
+const nameRegex = /^[A-Za-z\s]+$/;  // Для імені (лише латинські літери та пробіли)
+const addressRegex = /^[A-Za-z0-9\s,.-]+$/;  // Для адреси (літери, цифри, пробіли, коми, крапки та дефіси)
+const cityRegex = /^[A-Za-z\s]+$/;  // Для міста (лише літери та пробіли)
+const zipRegex = /^[0-9]{5,6}$/;  // Для поштового індексу (5-6 цифр)
+const cvcRegex = /^[0-9]{3}$/;  // Для CVC (3 цифри)
+const cardNumberRegex = /^[0-9]{16}$/;  // Для номеру картки (16 цифр)
+
+function validateForm(event) {
+    let isValid = true;
+    // Перевірка кожного поля
+    const fullName = document.getElementById('full-name').value;
+    if (!nameRegex.test(fullName)) {
+        alert("Невірне ім'я. Використовуйте лише літери.");
+        isValid = false;
+    }
+    const address = document.getElementById('address').value;
+    if (!addressRegex.test(address)) {
+        alert("Невірна адреса. Використовуйте лише літери, цифри та роздільники (коми, крапки).");
+        isValid = false;
+    }
+    const city = document.getElementById('city').value;
+    if (!cityRegex.test(city)) {
+        alert("Невірне місто. Використовуйте лише літери.");
+        isValid = false;
+    }
+    const zip = document.getElementById('zip').value;
+    if (!zipRegex.test(zip)) {
+        alert("Невірний поштовий індекс. Використовуйте 5-6 цифр.");
+        isValid = false;
+    }
+    const cardNumber = document.getElementById('card-number').value;
+    if (!cardNumberRegex.test(cardNumber)) {
+        alert("Невірний номер картки. Використовуйте 16 цифр.");
+        isValid = false;
+    }
+    const cvc = document.getElementById('cvc').value;
+    if (!cvcRegex.test(cvc)) {
+        alert("Невірний CVC. Використовуйте 3 цифри.");
+        isValid = false;
+    }
+    if (!isValid) {
+        event.preventDefault();  // Якщо форма не валідна, то не відправляти її
+    }
+}
+Зміни в файлах:
+index.html
+
+<link rel="stylesheet" href="./CSS/style.css">
++ <script src="form-validation.js" defer></script>
+    <script>
+
+</div>
+     <form oninput="resetTimer()" +onsubmit="validateForm(event)+>
+            <div class="form-section">
+
+Завдання 3: Було створено скрипт, який був поміщений в окремий файл, який перевіряє введені користувачем дані за умовами скрипту.
+Скрипт використовує бібліотеки jquery та jquery-validation
+При запуску функції, а функція запускається при відправці даних кнопкою, функція перевіряє введену користувачем інформацію 
+за умовами, і якщо ввід не збігається з умовами, під полем вводу, в якому виникла помилка користувача, виводиться надпис.
+Нові файли:
+form-validation-jQuery.js
+
+$(document).ready(function () { 
+    // Додавання власного правила для регулярного виразу
+    $.validator.addMethod("regex", function(value, element, pattern) {
+        return this.optional(element) || pattern.test(value);
+    }, "Невірний формат введення.");
+
+    $("#payment-form").validate({
+        rules: {
+            "full-name": {
+                required: true,
+                regex: /^[A-Za-z\s]+$/  // Тільки літери та пробіли
+            },
+            "address": {
+                required: true
+            },
+            "city": {
+                required: true
+            },
+            "zip": {
+                required: true,
+                digits: true,  // Має бути числовим значенням
+                minlength: 5,
+                maxlength: 5  // Перевірка на 5 цифр
+            },
+            "country": {
+                required: true
+            },
+            "card-name": {
+                required: true,
+                regex: /^[A-Za-z\s]+$/  // Тільки літери та пробіли
+            },
+            "card-number": {
+                required: true,
+                creditcard: true  // Перевірка на правильний формат номера картки
+            },
+            "exp-month": {
+                required: true
+            },
+            "exp-year": {
+                required: true
+            },
+            "cvc": {
+                required: true,
+                digits: true,  // Має бути числовим значенням
+                minlength: 3,
+                maxlength: 3  // Перевірка на 3 цифри
+            }
+        },
+        messages: {
+            "full-name": {
+                required: "Будь ласка, введіть ваше ім'я.",
+                regex: "Ім'я може містити лише літери та пробіли."
+            },
+            "address": {
+                required: "Будь ласка, введіть адресу."
+            },
+            "city": {
+                required: "Будь ласка, введіть місто."
+            },
+            "zip": {
+                required: "Будь ласка, введіть поштовий індекс.",
+                digits: "Індекс повинен містити лише цифри.",
+                minlength: "Поштовий індекс має складатися з 5 цифр.",
+                maxlength: "Поштовий індекс має складатися з 5 цифр."
+            },
+            "country": {
+                required: "Будь ласка, виберіть країну."
+            },
+            "card-name": {
+                required: "Будь ласка, введіть ім'я власника картки.",
+                regex: "Ім'я може містити лише літери та пробіли."
+            },
+            "card-number": {
+                required: "Будь ласка, введіть номер картки.",
+                creditcard: "Будь ласка, введіть правильний номер картки."
+            },
+            "exp-month": {
+                required: "Будь ласка, виберіть місяць закінчення терміну."
+            },
+            "exp-year": {
+                required: "Будь ласка, виберіть рік закінчення терміну."
+            },
+            "cvc": {
+                required: "Будь ласка, введіть CVC код.",
+                digits: "CVC має складатися лише з цифр.",
+                minlength: "CVC має містити 3 цифри.",
+                maxlength: "CVC має містити 3 цифри."
+            }
+        },
+        submitHandler: function (form) {
+            // При успішній валідації не показуємо повідомлення, просто відправляємо форму
+            form.submit();  // Можна замінити на AJAX відправку, якщо потрібно
+        }
+    });
+});
+
+Зміни в файлах:
+style.css
+
++ label.error {
++    color: red;
++    font-size: 0.9em;
++    margin-top: 5px;
++    display: block;
++ }
++ input.error,
++ select.error {
++    font-family: Tahoma, sans-serif;
++    border-color: red;
++    outline: none;
++    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
++ }
+
+index.html 
+
+   <link rel="stylesheet" href="./CSS/style.css">
++    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
++    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="form-validation.js" defer></script>
++    <script src="form-validation-jQuery.js" defer></script>
+    <script>
+
+<form oninput="resetTimer()"  +id="payment-form+"> <!--onsubmit="validateForm(event)"-->+
+
+До кожного поля введення input був добавлений аргумент name, який копіює id елементів для роботи скрипту
+
+Завдання 4: Було створено скрипт-демонстрацію об'єктів в JavaScript
+Скрипт створює об'єкт Student зі своїми підфункціями
+До скрипта була зроблена HTML-сторінка, яка за допомогою кнопок дозволяла виконувати підфункції об'єкта
+
+Нові файли: 
+Task5.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Об'єкт Student з циркуляцією прізвищ</title>
+    <script>
+        function Student(name, surname, age, course) {
+            this.name = name;
+            this.surname = surname;
+            this.age = age;
+            this.course = course;
+            this.surnamesList = ["Петренко", "Іванов", "Сидоренко", "Коваль", "Шевченко"];  // Масив варіантів прізвищ
+            this.currentSurnameIndex = 0; // Індекс поточного прізвища
+
+            this.GetOlder = function (years) {
+                this.age += years;
+            };
+
+            this.ChangeSurname = function () {
+                this.currentSurnameIndex = (this.currentSurnameIndex + 1) % this.surnamesList.length;  // Циклічно перемикаємося між прізвищами
+                this.surname = this.surnamesList[this.currentSurnameIndex];
+            };
+
+            this.MoveToSecondCourse = function () {
+                if (this.course < 5) {
+                    this.course += 1;
+                } else {
+                    alert("Студент вже на п'ятому курсі!");
+                }
+            };
+
+            this.ShowInfo = function () {
+                return `Ім'я: ${this.name}, Прізвище: ${this.surname}, Вік: ${this.age}, Курс: ${this.course}`;
+            };
+        }
+
+        let student = new Student("Іван", "Петренко", 18, 1);
+
+        function updateInfo() {
+            document.getElementById("studentInfo").innerHTML = student.ShowInfo();
+        }
+
+        function ageUp() {
+            student.GetOlder(1);
+            updateInfo();
+        }
+
+        function changeSurname() {
+            student.ChangeSurname();
+            updateInfo();
+        }
+
+        function nextCourse() {
+            student.MoveToSecondCourse();
+            updateInfo();
+        }
+
+        window.onload = updateInfo;
+    </script>
+</head>
+<body>
+    <h1>Інформація про студента</h1>
+    <p id="studentInfo"></p>
+    <button onclick="ageUp()">Збільшити вік</button>
+    <button onclick="changeSurname()">Змінити прізвище</button>
+    <button onclick="nextCourse()">Перевести на наступний курс</button>
+</body>
+</html>
+
+Завдання 5: Було створено скрипт для виведення n-го числа Фібоначі
+Число n приймається з вікна, в яке користувач вводе значення 
+n-не число Фібоначі виводиться текстом, який виводить скрипт
+
+Нові файли: 
+Task5.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n-те число Фібоначчі</title>
+    <script>
+        function fibonacci() {
+            let n = parseInt(prompt("Введіть число n для обчислення n-го числа Фібоначчі"));
+            if (isNaN(n) || n <= 0) {
+                alert("Будь ласка, введіть коректне число.");
+                return;
+            }
+            let a = 0, b = 1, c;
+            for (let i = 2; i <= n; i++) {
+                c = a + b;
+                a = b;
+                b = c;
+            }
+            document.write("Число Фібоначчі під номером " + n + " = " + b);
+        }
+        window.onload = fibonacci;
+    </script>
+</head>
+<body>
+    <h1>Виведення n-го числа послідовності Фібоначчі</h1>
+</body>
+</html>
