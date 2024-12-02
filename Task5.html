@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n-те число Фібоначчі</title>
+    <script>
+        function fibonacci() {
+            let n = parseInt(prompt("Введіть число n для обчислення n-го числа Фібоначчі"));
+            if (isNaN(n) || n <= 0) {
+                alert("Будь ласка, введіть коректне число.");
+                return;
+            }
+            let a = 0, b = 1, c;
+            for (let i = 2; i <= n; i++) {
+                c = a + b;
+                a = b;
+                b = c;
+            }
+            document.write("Число Фібоначчі під номером " + n + " = " + b);
+        }
+        window.onload = fibonacci;
+    </script>
+</head>
+<body>
+    <h1>Виведення n-го числа послідовності Фібоначчі</h1>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Об'єкт Student з циркуляцією прізвищ</title>
+    <script>
+        function Student(name, surname, age, course) {
+            this.name = name;
+            this.surname = surname;
+            this.age = age;
+            this.course = course;
+            this.surnamesList = ["Петренко", "Іванов", "Сидоренко", "Коваль", "Шевченко"];  // Масив варіантів прізвищ
+            this.currentSurnameIndex = 0; // Індекс поточного прізвища
+
+            this.GetOlder = function (years) {
+                this.age += years;
+            };
+
+            this.ChangeSurname = function () {
+                this.currentSurnameIndex = (this.currentSurnameIndex + 1) % this.surnamesList.length;  // Циклічно перемикаємося між прізвищами
+                this.surname = this.surnamesList[this.currentSurnameIndex];
+            };
+
+            this.MoveToSecondCourse = function () {
+                if (this.course < 5) {
+                    this.course += 1;
+                } else {
+                    alert("Студент вже на п'ятому курсі!");
+                }
+            };
+
+            this.ShowInfo = function () {
+                return `Ім'я: ${this.name}, Прізвище: ${this.surname}, Вік: ${this.age}, Курс: ${this.course}`;
+            };
+        }
+
+        let student = new Student("Іван", "Петренко", 18, 1);
+
+        function updateInfo() {
+            document.getElementById("studentInfo").innerHTML = student.ShowInfo();
+        }
+
+        function ageUp() {
+            student.GetOlder(1);
+            updateInfo();
+        }
+
+        function changeSurname() {
+            student.ChangeSurname();
+            updateInfo();
+        }
+
+        function nextCourse() {
+            student.MoveToSecondCourse();
+            updateInfo();
+        }
+
+        window.onload = updateInfo;
+    </script>
+</head>
+<body>
+    <h1>Інформація про студента</h1>
+    <p id="studentInfo"></p>
+    <button onclick="ageUp()">Збільшити вік</button>
+    <button onclick="changeSurname()">Змінити прізвище</button>
+    <button onclick="nextCourse()">Перевести на наступний курс</button>
+</body>
+</html>
